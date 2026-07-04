@@ -1,0 +1,1098 @@
+import React, { useState, useEffect } from 'react';
+
+// SVG Icons para visualização clínica moderna
+const Icons = {
+  Heart: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+    </svg>
+  ),
+  User: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    </svg>
+  ),
+  Clipboard: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+    </svg>
+  ),
+  Activity: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+    </svg>
+  ),
+  FileText: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  ),
+  Check: () => (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  ),
+  Search: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+  ),
+  Plus: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+    </svg>
+  ),
+  Printer: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+    </svg>
+  ),
+  Trash: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    </svg>
+  ),
+  Info: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  BookOpen: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+    </svg>
+  ),
+  Share: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 10.742l4.57 2.285M8.684 13.258l4.57-2.285M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  Network: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+    </svg>
+  ),
+  Bell: () => (
+    <svg className="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.02 6.02 0 00-4.902-5.901 2.03 2.03 0 00-3.196 0A6.02 6.02 0 005 11v3.159c0 .538-.214 1.055-.595 1.436L3 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+    </svg>
+  )
+};
+
+// --- TRADUTORES DE FORMATO DE BANCO DE DADOS (CAMEL TO SNAKE) ---
+const mapPatientToDB = (p, userId) => ({
+  id: p.id,
+  created_by: userId,
+  name: p.name,
+  cpf: p.cpf,
+  rg: p.rg,
+  birth_date: p.birthDate || null,
+  gender: p.gender,
+  marital_status: p.maritalStatus,
+  occupation: p.occupation,
+  address: p.address,
+  phone: p.phone,
+  email: p.email,
+  emergency_contact: p.emergencyContact,
+  emergency_phone: p.emergencyPhone,
+  emergency_relation: p.emergencyRelation,
+  clinical_diagnosis: p.clinicalDiagnosis,
+  queixa_principal: p.queixaPrincipal,
+  hda: p.hda,
+  comorbidades: p.comorbidades,
+  habitos: p.habitos,
+  dor: p.dor,
+  scales: p.scales,
+  ashworth_evaluated: p.ashworthEvaluated || [],
+  sinais_vitais: p.sinaisVitais,
+  exame_fisico: p.exameFisico,
+  segmentos_evaluated: p.exameFisico.adm || [],
+  diagnostico_cinesio: p.diagnosticoCinesio,
+  objetivos: p.objetivos,
+  conduta: p.conduta,
+  therapist_name: p.therapist,
+  therapist_crefito: p.crefito,
+  evolutions: p.evolutions || []
+});
+
+const mapPatientFromDB = (p) => ({
+  id: p.id,
+  date: p.created_at ? p.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
+  therapist: p.therapist_name,
+  crefito: p.therapist_crefito,
+  name: p.name,
+  cpf: p.cpf,
+  rg: p.rg,
+  birthDate: p.birth_date,
+  gender: p.gender,
+  maritalStatus: p.marital_status,
+  occupation: p.occupation,
+  address: p.address,
+  phone: p.phone,
+  email: p.email,
+  emergencyContact: p.emergency_contact,
+  emergencyPhone: p.emergency_phone,
+  emergencyRelation: p.emergency_relation,
+  clinicalDiagnosis: p.clinical_diagnosis,
+  queixaPrincipal: p.queixa_principal,
+  hda: p.hda || {},
+  comorbidades: p.comorbidades || {},
+  habitos: p.habitos || {},
+  dor: p.dor || { intensidadeAtual: 0, piorDor: 0, tipo: [], mapaZonas: [] },
+  sinaisVitais: p.sinais_vitais || {},
+  exameFisico: p.exame_fisico || { adm: p.segmentos_evaluated || [], forca: [], testes: [] },
+  diagnosticoCinesio: p.diagnostico_cinesio,
+  objetivos: p.objetivos || {},
+  conduta: p.conduta,
+  frequencia: p.frequencia || "2x",
+  reavaliacaoSessoes: p.reavaliacao_sessoes || "10",
+  evolutions: p.evolutions || [],
+  assignedCrefito: p.assigned_crefito,
+  assignedPhysioName: p.assigned_physio_name
+});
+
+export default function App() {
+  const [supabaseClient, setSupabaseClient] = useState(null);
+  const [session, setSession] = useState(null);
+  const [loggedUser, setLoggedUser] = useState(null);
+  const [patients, setPatients] = useState([]);
+  const [inboxShares, setInboxShares] = useState([]);
+  const [networkUsers, setNetworkUsers] = useState([]);
+  const [currentPatient, setCurrentPatient] = useState(null);
+  
+  const [viewMode, setViewMode] = useState('auth'); // 'auth', 'dashboard', 'form', 'preview', 'network'
+  const [searchTerm, setSearchTerm] = useState('');
+  const [previewTab, setPreviewTab] = useState('evaluation');
+  const [activeStep, setActiveStep] = useState(1);
+  const [activeShareModal, setActiveShareModal] = useState(null);
+
+  // Formulário de Registro / Login
+  const [authForm, setAuthForm] = useState({ email: "", password: "", name: "", crefito: "", type: "Fisioterapeuta Autônomo" });
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [modalMessage, setModalMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // Evolução clínica temporária
+  const [newEvolution, setNewEvolution] = useState({
+    date: new Date().toISOString().split('T')[0],
+    painLevel: 5,
+    status: 'Melhora parcial',
+    notes: '',
+    therapist: ''
+  });
+
+  // --- CARREGADOR DINÂMICO DO SDK DO SUPABASE ---
+  useEffect(() => {
+    if (window.supabase) {
+      const SUPABASE_URL = "https://xspfjioiwiwshxjlhcpu.supabase.co";
+      const SUPABASE_ANON_KEY = "sb_publishable_jzA-5RXqjB-BmkrGpss1hw_8f9jWSWd";
+      const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      setSupabaseClient(client);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = "https://unpkg.com/@supabase/supabase-js@2";
+    script.async = true;
+    script.onload = () => {
+      const SUPABASE_URL = "https://xspfjioiwiwshxjlhcpu.supabase.co";
+      const SUPABASE_ANON_KEY = "sb_publishable_jzA-5RXqjB-BmkrGpss1hw_8f9jWSWd";
+      const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      setSupabaseClient(client);
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
+  }, []);
+
+  // --- ESCUTADOR DE AUTENTICAÇÃO SUPABASE ---
+  useEffect(() => {
+    if (!supabaseClient) return;
+
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) handleLoadUserProfile(session.user);
+    });
+
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        handleLoadUserProfile(session.user);
+      } else {
+        setLoggedUser(null);
+        setViewMode('auth');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabaseClient]);
+
+  // Carrega os dados adicionais de perfil do banco
+  const handleLoadUserProfile = async (user) => {
+    if (!supabaseClient) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (data) {
+        setLoggedUser({
+          id: user.id,
+          name: data.name,
+          crefito: data.crefito,
+          type: data.type === 'clinica' ? 'Clínica' : 'Fisioterapeuta Autônomo',
+          clinicName: data.type === 'clinica' ? data.name : "Consultório Geral",
+          location: data.crefito ? "Local Autônomo" : "Unidade Clínica"
+        });
+        setViewMode('dashboard');
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Carrega pacientes e rede toda vez que logar
+  useEffect(() => {
+    if (loggedUser) {
+      fetchPatientsAndDirectory();
+    }
+  }, [loggedUser]);
+
+  const fetchPatientsAndDirectory = async () => {
+    if (!loggedUser || !supabaseClient) return;
+    setLoading(true);
+    try {
+      // 1. Carregar Pacientes
+      const { data: patientsData, error: pError } = await supabaseClient
+        .from('patients')
+        .select('*');
+
+      if (patientsData) {
+        const parsedPatients = patientsData.map(mapPatientFromDB);
+        setPatients(parsedPatients);
+        
+        // Separa as fichas compartilhadas das criadas por mim
+        const localPatients = parsedPatients.filter(p => p.crefito === loggedUser.crefito || !p.assignedCrefito);
+        const sharedWithMe = parsedPatients.filter(p => p.assignedCrefito === loggedUser.crefito);
+        setInboxShares(sharedWithMe);
+      }
+
+      // 2. Carregar Diretório de Profissionais da Rede
+      const { data: profilesData } = await supabaseClient
+        .from('profiles')
+        .select('*');
+
+      if (profilesData) {
+        setNetworkUsers(profilesData.map(p => ({
+          id: p.id,
+          name: p.name,
+          responsible: p.name,
+          crefito: p.crefito || "N/A",
+          location: p.type === 'clinica' ? 'Clínica' : 'Fisioterapeuta',
+          type: p.type === 'clinica' ? 'Clínica' : 'Autônomo'
+        })));
+      }
+    } catch (err) {
+      console.error("Erro ao carregar dados do Supabase:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --- SUBMISSÃO DE AUTENTICAÇÃO REAL (SUPABASE) ---
+  const handleAuthSubmit = async (e) => {
+    e.preventDefault();
+    if (!supabaseClient) return;
+    setLoading(true);
+
+    if (isRegistering) {
+      // Registrar no Supabase Auth
+      const { data, error } = await supabaseClient.auth.signUp({
+        email: authForm.email,
+        password: authForm.password,
+      });
+
+      if (error) {
+        showModal("Erro de Cadastro", error.message);
+        setLoading(false);
+        return;
+      }
+
+      const user = data.user;
+      if (user) {
+        // Inserir Perfil associado na tabela 'profiles'
+        const { error: profileError } = await supabaseClient
+          .from('profiles')
+          .insert([{
+            id: user.id,
+            name: authForm.name,
+            email: authForm.email,
+            type: authForm.type === 'Clínica' ? 'clinica' : 'fisioterapeuta',
+            crefito: authForm.crefito || null,
+            linked_physios: []
+          }]);
+
+        if (profileError) {
+          showModal("Erro ao criar perfil", profileError.message);
+        } else {
+          showModal("Sucesso!", "Cadastro realizado com sucesso na nuvem! Verifique seu e-mail caso necessário.");
+          setIsRegistering(false);
+        }
+      }
+    } else {
+      // Login Real no Supabase Auth
+      const { error } = await supabaseClient.auth.signInWithPassword({
+        email: authForm.email,
+        password: authForm.password,
+      });
+
+      if (error) {
+        showModal("Falha de Acesso", "E-mail ou senha inválidos cadastrados na plataforma.");
+      }
+    }
+    setLoading(false);
+  };
+
+  const handleLogout = async () => {
+    if (!supabaseClient) return;
+    await supabaseClient.auth.signOut();
+    setLoggedUser(null);
+    setViewMode('auth');
+  };
+
+  // Salva ou atualiza a ficha de avaliação diretamente no banco de dados na nuvem
+  const handleSavePatient = async (e) => {
+    e.preventDefault();
+    if (!supabaseClient) return;
+    if (!currentPatient.name.trim()) {
+      showModal("Ops!", "O nome do paciente é obrigatório para salvar o prontuário.");
+      return;
+    }
+
+    setLoading(true);
+    const dbPatient = mapPatientToDB(currentPatient, loggedUser.id);
+
+    try {
+      const { error } = await supabaseClient
+        .from('patients')
+        .upsert([dbPatient]);
+
+      if (error) {
+        showModal("Erro ao Salvar", error.message);
+      } else {
+        showModal("Salvo em Nuvem!", `A ficha clínica de ${currentPatient.name} foi gravada de forma definitiva na sua base online.`);
+        fetchPatientsAndDirectory();
+        setViewMode('dashboard');
+      }
+    } catch (err) {
+      showModal("Erro", err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeletePatient = async (id) => {
+    if (!supabaseClient) return;
+    if (!window.confirm("Deseja realmente excluir este prontuário de forma definitiva na nuvem?")) return;
+    setLoading(true);
+    try {
+      const { error } = await supabaseClient
+        .from('patients')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        showModal("Erro ao Excluir", error.message);
+      } else {
+        showModal("Removido", "Ficha clínica removida do banco de dados na nuvem.");
+        fetchPatientsAndDirectory();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleShareSubmit = async (recipient) => {
+    if (!activeShareModal || !supabaseClient) return;
+    setLoading(true);
+
+    try {
+      // Atualiza o prontuário na nuvem, preenchendo o CREFITO atribuído
+      const { error } = await supabaseClient
+        .from('patients')
+        .update({
+          assigned_crefito: recipient.crefito,
+          assigned_physio_name: recipient.name
+        })
+        .eq('id', activeShareModal.id);
+
+      if (error) {
+        showModal("Erro ao Compartilhar", error.message);
+      } else {
+        showModal("Prontuário Compartilhado!", `O histórico clínico de ${activeShareModal.name} foi compartilhado e encaminhado à clínica/profissional ${recipient.name}.`);
+        setActiveShareModal(null);
+        fetchPatientsAndDirectory();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Lançar evolução de sessão direto na tabela na nuvem
+  const handleAddEvolution = async (e) => {
+    e.preventDefault();
+    if (!newEvolution.notes.trim() || !supabaseClient) return;
+
+    const createdEvolution = {
+      id: "ev-" + Date.now().toString(),
+      date: newEvolution.date,
+      painLevel: newEvolution.painLevel,
+      status: newEvolution.status,
+      notes: newEvolution.notes,
+      therapist: loggedUser.name
+    };
+
+    const updatedEvolutions = [...(currentPatient.evolutions || []), createdEvolution];
+    setLoading(true);
+
+    try {
+      const { error } = await supabaseClient
+        .from('patients')
+        .update({ evolutions: updatedEvolutions })
+        .eq('id', currentPatient.id);
+
+      if (error) {
+        showModal("Erro", error.message);
+      } else {
+        setCurrentPatient({ ...currentPatient, evolutions: updatedEvolutions });
+        setNewEvolution({
+          date: new Date().toISOString().split('T')[0],
+          painLevel: 5,
+          status: 'Melhora parcial',
+          notes: '',
+          therapist: loggedUser.name
+        });
+        showModal("Evoluído!", "Evolução clínica gravada com sucesso.");
+        fetchPatientsAndDirectory();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteEvolution = async (evolutionId) => {
+    if (!supabaseClient) return;
+    const updatedEvolutions = currentPatient.evolutions.filter(ev => ev.id !== evolutionId);
+    setLoading(true);
+    try {
+      const { error } = await supabaseClient
+        .from('patients')
+        .update({ evolutions: updatedEvolutions })
+        .eq('id', currentPatient.id);
+
+      if (error) {
+        showModal("Erro", error.message);
+      } else {
+        setCurrentPatient({ ...currentPatient, evolutions: updatedEvolutions });
+        fetchPatientsAndDirectory();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImportSharedRecord = async (sharedRecord) => {
+    if (!supabaseClient) return;
+    setLoading(true);
+    try {
+      // O paciente importado ganha uma nova cópia associada ao meu login
+      const dbPatient = mapPatientToDB({
+        ...sharedRecord,
+        id: "imp-" + Date.now().toString(),
+        therapist: loggedUser.name,
+        crefito: loggedUser.crefito,
+        date: new Date().toISOString().split('T')[0],
+        evolutions: []
+      }, loggedUser.id);
+
+      const { error } = await supabaseClient
+        .from('patients')
+        .insert([dbPatient]);
+
+      if (error) {
+        showModal("Erro de Importação", error.message);
+      } else {
+        showModal("Sucesso!", `O prontuário foi integrado à sua base com sucesso.`);
+        fetchPatientsAndDirectory();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filtro de Busca
+  const filteredPatients = patients.filter(p => {
+    const s = searchTerm.toLowerCase();
+    return p.name.toLowerCase().includes(s) || (p.cpf && p.cpf.includes(s));
+  });
+
+  const getBlankPatientTemplate = () => ({
+    id: "pat-" + Date.now().toString(),
+    date: new Date().toISOString().split('T')[0],
+    therapist: loggedUser?.name || "Fisioterapeuta",
+    crefito: loggedUser?.crefito || "N/D",
+    name: "",
+    cpf: "",
+    birthDate: "",
+    gender: "M",
+    maritalStatus: "Solteiro",
+    occupation: "",
+    address: "",
+    phone: "",
+    email: "",
+    emergencyContact: "",
+    emergencyPhone: "",
+    emergencyRelation: "",
+    clinicalDiagnosis: "",
+    queixaPrincipal: "",
+    hda: { inicio: "Súbito", tempo: "", mecanismo: "", fatoresMelhora: "", fatoresPiora: "", evolucao: "Estacionário" },
+    comorbidades: { has: false, dm: false, cardio: false },
+    habitos: { atividade: "Sedentário", tabagismo: "Não", sono: "Boa", agua: "1L a 2L", ergonomia: "Passa muito tempo sentado" },
+    dor: { intensidadeAtual: 0, piorDor: 0, tipo: [], mapaZonas: [] },
+    exames: { rx: "", rm: "" },
+    sinaisVitais: { pa: "", fc: "", spo2: "" },
+    exameFisico: { inspecao: "", palpacao: "", adm: [{ articulacao: "", status: "Normal", detalhes: "" }], forca: [], testes: [] },
+    diagnosticoCinesio: "",
+    objetivos: { curto: "", medio: "", longo: "" },
+    conduta: "",
+    frequencia: "2x",
+    reavaliacaoSessoes: "10",
+    evolutions: []
+  });
+
+  const handleNewEvaluation = () => {
+    setCurrentPatient(getBlankPatientTemplate());
+    setActiveStep(1);
+    setViewMode('form');
+  };
+
+  const handleEditPatient = (patient) => {
+    setCurrentPatient(JSON.parse(JSON.stringify(patient)));
+    setActiveStep(1);
+    setViewMode('form');
+  };
+
+  const handleSelectPatientToPreview = (patient) => {
+    setCurrentPatient(patient);
+    setPreviewTab('evaluation');
+    setViewMode('preview');
+  };
+
+  const calculateAge = (dobString) => {
+    if (!dobString) return "";
+    const today = new Date();
+    const birthDate = new Date(dobString);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+    return age >= 0 ? `${age} anos` : "";
+  };
+
+  const updateHdaState = (field, value) => {
+    setCurrentPatient(prev => ({ ...prev, hda: { ...prev.hda, [field]: value } }));
+  };
+
+  const updateComorbidadesState = (field, value) => {
+    setCurrentPatient(prev => ({ ...prev, comorbidades: { ...prev.comorbidades, [field]: value } }));
+  };
+
+  const updateHabitosState = (field, value) => {
+    setCurrentPatient(prev => ({ ...prev, habitos: { ...prev.habitos, [field]: value } }));
+  };
+
+  const updateDorState = (field, value) => {
+    setCurrentPatient(prev => ({ ...prev, dor: { ...prev.dor, [field]: value } }));
+  };
+
+  const togglePainZone = (zone) => {
+    const currentZones = [...currentPatient.dor.mapaZonas];
+    const index = currentZones.indexOf(zone);
+    if (index > -1) currentZones.splice(index, 1);
+    else currentZones.push(zone);
+    updateDorState('mapaZonas', currentZones);
+  };
+
+  const toggleDorTipo = (tipo) => {
+    const currentTipos = [...currentPatient.dor.tipo];
+    const index = currentTipos.indexOf(tipo);
+    if (index > -1) currentTipos.splice(index, 1);
+    else currentTipos.push(tipo);
+    updateDorState('tipo', currentTipos);
+  };
+
+  const showModal = (title, message) => {
+    setModalMessage({ title, message });
+  };
+
+  // Se o cliente do Supabase ainda não foi carregado via script na aba head, exibimos um indicador agradável de inicialização
+  if (!supabaseClient) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-xs font-black text-slate-500 uppercase tracking-widest">Iniciando canais em nuvem do FisioHub...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pb-12">
+      
+      {/* Elemento de Alerta de Modal Customizado */}
+      {modalMessage && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full animate-in fade-in duration-150">
+            <h3 className="text-xl font-bold text-teal-800 mb-2">{modalMessage.title}</h3>
+            <p className="text-slate-600 mb-6 text-sm leading-relaxed">{modalMessage.message}</p>
+            <div className="flex justify-end">
+              <button onClick={() => setModalMessage(null)} className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg text-sm transition-all">
+                Entendi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Compartilhamento na Nuvem */}
+      {activeShareModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden">
+            <div className="bg-teal-800 text-white p-6">
+              <h3 className="text-lg font-bold">Enviar Prontuário na Nuvem</h3>
+              <p className="text-xs text-teal-100 mt-1">Transfira os dados clínicos de {activeShareModal.name} de forma segura.</p>
+            </div>
+            
+            <div className="p-6 space-y-4 max-h-[350px] overflow-y-auto">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Profissionais Cadastrados na Nuvem ({networkUsers.length})</p>
+              <div className="space-y-2">
+                {networkUsers.map(user => (
+                  <div key={user.id} onClick={() => handleShareSubmit(user)} className="border p-3 rounded-2xl flex items-center justify-between hover:bg-teal-50 cursor-pointer transition-all">
+                    <div>
+                      <p className="font-bold text-slate-800 text-sm">{user.name}</p>
+                      <p className="text-xs text-slate-500">CREFITO: {user.crefito}</p>
+                    </div>
+                    <button className="bg-teal-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold">Encaminhar</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-slate-50 p-4 border-t flex justify-end">
+              <button onClick={() => setActiveShareModal(null)} className="px-4 py-2 text-slate-600 text-xs font-bold rounded-xl">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* HEADER DA PLATAFORMA */}
+      {viewMode !== 'auth' && (
+        <header className="bg-gradient-to-r from-teal-800 to-cyan-950 text-white shadow-md print:hidden">
+          <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-teal-500/20 p-2.5 rounded-xl border border-teal-400/30">
+                <Icons.Activity className="text-teal-300 w-8 h-8" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black tracking-tight flex items-center gap-1.5">
+                  Fisio<span className="text-teal-300">Hub</span>
+                  <span className="bg-emerald-500 text-emerald-950 text-[10px] font-black uppercase px-2 py-0.5 rounded-full tracking-wider">Nuvem</span>
+                </h1>
+                <p className="text-xs text-teal-100/80">Plataforma de Prontuários Integrada ao Supabase PostgreSQL</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3.5 bg-teal-950/40 p-2.5 rounded-2xl border border-teal-800">
+              <div className="text-left text-xs">
+                <p className="font-bold text-teal-100">{loggedUser?.name}</p>
+                <p className="text-[10px] text-teal-300/85">CREFITO: {loggedUser?.crefito} • {loggedUser?.clinicName}</p>
+              </div>
+              <button onClick={handleLogout} className="text-[10px] bg-red-600/20 hover:bg-red-600/40 px-2 py-1.5 rounded-lg text-red-200 transition-all font-bold">Sair</button>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button onClick={() => setViewMode('dashboard')} className="px-4 py-2 rounded-xl text-xs font-bold text-white hover:bg-white/5 flex items-center gap-1"><Icons.Clipboard /> Painel</button>
+              <button onClick={() => setViewMode('network')} className="px-4 py-2 rounded-xl text-xs font-bold text-white hover:bg-white/5 flex items-center gap-1"><Icons.Network /> Profissionais</button>
+              <button onClick={handleNewEvaluation} className="px-4 py-2 bg-teal-400 hover:bg-teal-300 text-teal-950 font-black rounded-xl text-xs flex items-center gap-1.5"><Icons.Plus /> Nova Avaliação</button>
+            </div>
+          </div>
+        </header>
+      )}
+
+      {/* INDICADOR DE CARREGAMENTO */}
+      {loading && (
+        <div className="fixed top-4 right-4 bg-slate-900 text-white px-4 py-2 rounded-xl shadow-lg z-50 text-xs flex items-center gap-2">
+          <div className="w-4 h-4 border-2 border-teal-400 border-t-transparent rounded-full animate-spin"></div>
+          Sincronizando com o Supabase...
+        </div>
+      )}
+
+      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        
+        {/* TELA DE AUTENTICAÇÃO REAL */}
+        {viewMode === 'auth' && (
+          <div className="max-w-md mx-auto bg-white rounded-3xl border border-slate-100 shadow-xl p-8 mt-12">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-black text-slate-800">Acesso ao FisioHub 2.0</h2>
+              <p className="text-xs text-slate-500 mt-1">Conectado ao seu banco de dados seguro no Supabase.</p>
+            </div>
+
+            <div className="flex border-b mb-6 text-xs font-bold">
+              <button onClick={() => setIsRegistering(false)} className={`flex-1 pb-3 ${!isRegistering ? 'border-b-2 border-teal-600 text-teal-700' : 'text-slate-400'}`}>Entrar</button>
+              <button onClick={() => setIsRegistering(true)} className={`flex-1 pb-3 ${isRegistering ? 'border-b-2 border-teal-600 text-teal-700' : 'text-slate-400'}`}>Criar Conta</button>
+            </div>
+
+            <form onSubmit={handleAuthSubmit} className="space-y-4">
+              {isRegistering && (
+                <>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nome Completo / Clínica *</label>
+                    <input type="text" required placeholder="Nome do profissional ou clínica" value={authForm.name} onChange={(e) => setAuthForm({...authForm, name: e.target.value})} className="w-full px-4 py-2 bg-slate-50 border rounded-xl text-xs" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">CREFITO *</label>
+                      <input type="text" required placeholder="Ex: 12345-F" value={authForm.crefito} onChange={(e) => setAuthForm({...authForm, crefito: e.target.value})} className="w-full px-4 py-2 bg-slate-50 border rounded-xl text-xs" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Modelo</label>
+                      <select value={authForm.type} onChange={(e) => setAuthForm({...authForm, type: e.target.value})} className="w-full px-4 py-2 bg-slate-50 border rounded-xl text-xs">
+                        <option value="Fisioterapeuta Autônomo">Autônomo</option>
+                        <option value="Clínica">Clínica</option>
+                      </select>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">E-mail de Acesso *</label>
+                <input type="email" required placeholder="exemplo@email.com" value={authForm.email} onChange={(e) => setAuthForm({...authForm, email: e.target.value})} className="w-full px-4 py-2 bg-slate-50 border rounded-xl text-xs" />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Senha de Acesso *</label>
+                <input type="password" required placeholder="••••••••" value={authForm.password} onChange={(e) => setAuthForm({...authForm, password: e.target.value})} className="w-full px-4 py-2 bg-slate-50 border rounded-xl text-xs" />
+              </div>
+
+              <button type="submit" className="w-full py-3 bg-teal-600 hover:bg-teal-700 text-white font-black text-xs uppercase tracking-wider rounded-2xl transition-all">
+                {isRegistering ? "Concluir Cadastro" : "Acessar Sistema"}
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* PAINEL CENTRAL (DASHBOARD) */}
+        {viewMode === 'dashboard' && (
+          <div className="space-y-6">
+            
+            {/* Prontuários Compartilhados de Outros Fisioterapeutas */}
+            {inboxShares.length > 0 && (
+              <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-3xl p-6">
+                <h3 className="font-bold text-amber-900 text-sm">Prontuários Recebidos para Análise ({inboxShares.length})</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                  {inboxShares.map(share => (
+                    <div key={share.id} className="bg-white p-4 rounded-2xl border border-amber-100">
+                      <h4 className="font-bold text-slate-800">{share.name}</h4>
+                      <p className="text-xs text-slate-500">CPF: {share.cpf} | Encaminhado para seu CREFITO</p>
+                      <button onClick={() => handleImportSharedRecord(share)} className="mt-3 w-full bg-emerald-600 text-white text-xs font-bold py-2 rounded-xl">Importar para Meus Pacientes</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col md:flex-row justify-between gap-4 bg-white p-5 rounded-3xl border shadow-sm">
+              <div>
+                <h2 className="text-lg font-black text-slate-800">Prontuários Ativos na Nuvem</h2>
+                <p className="text-xs text-slate-500">Gerenciamento seguro de dados clínicos via Supabase PostgreSQL.</p>
+              </div>
+              <input type="text" placeholder="Buscar por Nome ou CPF..." className="px-4 py-2 bg-slate-50 border rounded-2xl text-xs font-semibold w-full md:w-80" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredPatients.map(patient => (
+                <div key={patient.id} className="bg-white border rounded-3xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                  <div>
+                    <div className="flex justify-between items-start">
+                      <span className="bg-teal-50 text-teal-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase">Avaliação Ativa</span>
+                      <div className="flex gap-1">
+                        <button onClick={() => handleEditPatient(patient)} className="p-1.5 text-slate-400 hover:text-teal-600"><Icons.Plus /></button>
+                        <button onClick={() => setActiveShareModal(patient)} className="p-1.5 text-slate-400 hover:text-blue-600"><Icons.Share /></button>
+                        <button onClick={() => handleDeletePatient(patient.id)} className="p-1.5 text-slate-400 hover:text-red-500"><Icons.Trash /></button>
+                      </div>
+                    </div>
+                    <h3 className="font-black text-base text-slate-800 mt-3">{patient.name}</h3>
+                    <p className="text-xs text-slate-500">CPF: {patient.cpf || 'N/A'} | Idade: {calculateAge(patient.birthDate)}</p>
+                    <p className="text-xs font-bold text-teal-600 mt-2 line-clamp-2">{patient.clinicalDiagnosis || "Sem diagnóstico médico informado."}</p>
+                  </div>
+                  <button onClick={() => handleSelectPatientToPreview(patient)} className="mt-5 w-full py-2.5 bg-slate-50 hover:bg-teal-700 hover:text-white font-bold rounded-2xl text-xs transition-all border">Visualizar Prontuário</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* WIZARD DE CADASTRO/EDIÇÃO (5 PASSOS) */}
+        {viewMode === 'form' && (
+          <div className="bg-white rounded-3xl shadow-lg border overflow-hidden">
+            <div className="bg-slate-50 border-b px-6 py-4 flex items-center justify-between">
+              <span className="px-3 py-1 bg-teal-100 text-teal-800 text-xs font-black uppercase rounded-md">Passo {activeStep} de 5</span>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => setViewMode('dashboard')} className="px-4 py-2 text-slate-500 text-xs font-bold">Cancelar</button>
+                <button type="button" onClick={handleSavePatient} className="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl flex items-center gap-1"><Icons.Check /> Gravar na Nuvem</button>
+              </div>
+            </div>
+
+            <div className="p-6 md:p-8 space-y-6">
+              {activeStep === 1 && (
+                <div className="space-y-4">
+                  <h3 className="text-sm font-black text-slate-700">1. Identificação Básica</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nome Completo *</label>
+                      <input type="text" required value={currentPatient.name} onChange={(e) => setCurrentPatient({...currentPatient, name: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-xs font-bold" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">CPF *</label>
+                      <input type="text" required value={currentPatient.cpf} onChange={(e) => setCurrentPatient({...currentPatient, cpf: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-xs font-bold" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">WhatsApp</label>
+                      <input type="text" value={currentPatient.phone} onChange={(e) => setCurrentPatient({...currentPatient, phone: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-xs font-bold" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Data de Nascimento</label>
+                      <input type="date" value={currentPatient.birthDate} onChange={(e) => setCurrentPatient({...currentPatient, birthDate: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-xs font-bold" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeStep === 2 && (
+                <div className="space-y-4">
+                  <h3 className="text-sm font-black text-slate-700">2. Queixa & Histórico</h3>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Queixa Principal (QP) *</label>
+                    <textarea rows="3" value={currentPatient.queixaPrincipal} onChange={(e) => setCurrentPatient({...currentPatient, queixaPrincipal: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-xs" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Diagnóstico Clínico (Médico / CID)</label>
+                    <textarea rows="2" value={currentPatient.clinicalDiagnosis} onChange={(e) => setCurrentPatient({...currentPatient, clinicalDiagnosis: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-xs" />
+                  </div>
+                </div>
+              )}
+
+              {activeStep === 3 && (
+                <div className="space-y-4">
+                  <h3 className="text-sm font-black text-slate-700">3. Hábitos & Dor (EVA)</h3>
+                  <div className="bg-slate-50 p-4 rounded-2xl">
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-2">Intensidade de Dor (EVA): {currentPatient.dor.intensidadeAtual}/10</label>
+                    <input type="range" min="0" max="10" value={currentPatient.dor.intensidadeAtual} onChange={(e) => updateDorState('intensidadeAtual', parseInt(e.target.value))} className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-600" />
+                  </div>
+                </div>
+              )}
+
+              {activeStep === 4 && (
+                <div className="space-y-4">
+                  <h3 className="text-sm font-black text-slate-700">4. Exame Cinesiofuncional</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Inspeção Visual / Marcha</label>
+                      <textarea rows="3" value={currentPatient.exameFisico.inspecao} onChange={(e) => setCurrentPatient({...currentPatient, exameFisico: {...currentPatient.exameFisico, inspecao: e.target.value}})} className="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-xs" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Palpação Local / Tônus</label>
+                      <textarea rows="3" value={currentPatient.exameFisico.palpacao} onChange={(e) => setCurrentPatient({...currentPatient, exameFisico: {...currentPatient.exameFisico, palpacao: e.target.value}})} className="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-xs" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeStep === 5 && (
+                <div className="space-y-4">
+                  <h3 className="text-sm font-black text-slate-700">5. Diagnóstico & Conduta</h3>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Diagnóstico Cinesioterapêutico (Fisioterapia)</label>
+                    <textarea rows="3" value={currentPatient.diagnosticoCinesio} onChange={(e) => setCurrentPatient({...currentPatient, diagnosticoCinesio: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-xs font-bold" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Conduta Proposta</label>
+                    <textarea rows="3" value={currentPatient.conduta} onChange={(e) => setCurrentPatient({...currentPatient, conduta: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-xs font-bold" />
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-between border-t pt-6">
+                <button type="button" disabled={activeStep === 1} onClick={() => setActiveStep(prev => prev - 1)} className="px-4 py-2 border rounded-xl text-xs font-bold disabled:opacity-50">Anterior</button>
+                {activeStep < 5 ? (
+                  <button type="button" onClick={() => setActiveStep(prev => prev + 1)} className="px-5 py-2 bg-teal-600 text-white text-xs font-bold rounded-xl">Próximo</button>
+                ) : (
+                  <button type="submit" onClick={handleSavePatient} className="px-6 py-2 bg-emerald-600 text-white text-xs font-black rounded-xl">Salvar e Concluir</button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* VISUALIZAÇÃO COMPLETA DO PRONTUÁRIO */}
+        {viewMode === 'preview' && currentPatient && (
+          <div className="space-y-6">
+            <div className="bg-white p-4 rounded-3xl border flex flex-wrap justify-between items-center gap-4 print:hidden">
+              <div className="flex gap-2">
+                <button onClick={() => setPreviewTab('evaluation')} className={`px-4 py-2 text-xs font-bold rounded-xl ${previewTab === 'evaluation' ? 'bg-teal-600 text-white' : 'text-slate-600'}`}>Avaliação</button>
+                <button onClick={() => setPreviewTab('evolutions')} className={`px-4 py-2 text-xs font-bold rounded-xl ${previewTab === 'evolutions' ? 'bg-teal-600 text-white' : 'text-slate-600'}`}>Evoluções ({currentPatient.evolutions.length})</button>
+              </div>
+              <div className="flex gap-2">
+                <button onClick={() => setViewMode('dashboard')} className="px-4 py-2 border rounded-xl text-xs font-bold">Voltar</button>
+                <button onClick={() => window.print()} className="px-4 py-2 bg-teal-600 text-white rounded-xl text-xs font-bold">Imprimir PDF</button>
+              </div>
+            </div>
+
+            {/* FICHA DE AVALIAÇÃO IMPRESSA */}
+            {previewTab === 'evaluation' && (
+              <div className="bg-white p-8 md:p-12 rounded-3xl border print:border-none">
+                <h1 className="text-xl font-black text-teal-800 uppercase border-b-2 pb-3 mb-6">Prontuário de Fisioterapia</h1>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-2xl mb-6">
+                  <div className="col-span-2">
+                    <span className="text-[10px] text-slate-400 font-bold block">PACIENTE</span>
+                    <span className="text-sm font-bold text-slate-800">{currentPatient.name}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-bold block">CPF</span>
+                    <span className="text-xs font-bold">{currentPatient.cpf}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-slate-400 font-bold block">IDADE</span>
+                    <span className="text-xs font-bold">{calculateAge(currentPatient.birthDate)}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-xs font-black text-teal-700 uppercase mb-1">Queixa Principal</h3>
+                    <p className="text-xs font-semibold text-slate-700 bg-slate-50 p-3 rounded-xl">"{currentPatient.queixaPrincipal}"</p>
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-teal-700 uppercase mb-1">Diagnóstico Cinesioterapêutico</h3>
+                    <p className="text-xs font-semibold text-slate-700 bg-slate-50 p-3 rounded-xl">{currentPatient.diagnosticoCinesio || "Não informado."}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-black text-teal-700 uppercase mb-1">Conduta Proposta</h3>
+                    <p className="text-xs font-semibold text-slate-700 bg-slate-50 p-3 rounded-xl">{currentPatient.conduta || "Não informada."}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TABELA DE EVOLUÇÕES DIÁRIAS */}
+            {previewTab === 'evolutions' && (
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-3xl border print:hidden">
+                  <h3 className="text-xs font-black text-teal-800 uppercase tracking-wider mb-4 border-b pb-2">Registrar Nova Evolução de Sessão</h3>
+                  <form onSubmit={handleAddEvolution} className="space-y-4">
+                    <textarea rows="3" required placeholder="Escreva a evolução da sessão de hoje..." value={newEvolution.notes} onChange={(e) => setNewEvolution({...newEvolution, notes: e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border rounded-xl text-xs focus:outline-none" />
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-500">Dor (EVA): {newEvolution.painLevel}</span>
+                        <input type="range" min="0" max="10" value={newEvolution.painLevel} onChange={(e) => setNewEvolution({...newEvolution, painLevel: parseInt(e.target.value)})} className="w-32 accent-teal-600" />
+                      </div>
+                      <button type="submit" className="px-5 py-2 bg-teal-600 text-white text-xs font-bold rounded-xl">Salvar Sessão</button>
+                    </div>
+                  </form>
+                </div>
+
+                <div className="bg-white p-8 rounded-3xl border space-y-6">
+                  <h2 className="text-lg font-black text-teal-800 uppercase border-b pb-2">Histórico de Atendimentos</h2>
+                  {currentPatient.evolutions.length === 0 ? (
+                    <p className="text-xs text-slate-400 italic">Nenhuma evolução de sessão gravada no prontuário.</p>
+                  ) : (
+                    <div className="relative border-l-2 ml-3 pl-6 space-y-6">
+                      {currentPatient.evolutions.map((ev, i) => (
+                        <div key={ev.id} className="relative">
+                          <span className="absolute -left-[31px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-teal-100 ring-4 ring-white">
+                            <span className="h-2 w-2 rounded-full bg-teal-600"></span>
+                          </span>
+                          <div className="bg-slate-50 p-4 rounded-xl border">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-xs font-black text-slate-800">{ev.date}</span>
+                              <span className="text-xs font-bold text-red-600">EVA: {ev.painLevel}/10</span>
+                            </div>
+                            <p className="text-xs text-slate-700 font-semibold">{ev.notes}</p>
+                            <div className="mt-3 flex justify-between text-[10px] text-slate-400">
+                              <span>Sessão #{i+1}</span>
+                              <button onClick={() => handleDeleteEvolution(ev.id)} className="text-red-500 font-bold hover:underline">Remover</button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* DIRETÓRIO DE REDE / USUÁRIOS */}
+        {viewMode === 'network' && (
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-3xl border shadow-sm">
+              <h2 className="text-lg font-black text-slate-800">Rede de Parcerias FisioHub</h2>
+              <p className="text-xs text-slate-500 mt-1">Veja outros fisioterapeutas e clínicas cadastrados na nuvem.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {networkUsers.map(user => (
+                <div key={user.id} className="bg-white border rounded-3xl p-6 shadow-sm flex flex-col justify-between">
+                  <div>
+                    <span className="bg-teal-50 text-teal-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase">{user.type}</span>
+                    <h3 className="font-black text-slate-800 text-lg mt-3">{user.name}</h3>
+                    <p className="text-xs text-slate-500">CREFITO: {user.crefito}</p>
+                  </div>
+                  <div className="border-t pt-4 mt-6 flex justify-between items-center text-xs text-emerald-600 font-bold">
+                    <span>🔌 Canal Criptografado Ativo</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </main>
+
+      <footer className="bg-slate-900 text-slate-400 text-center py-6 border-t border-slate-800 mt-12 print:hidden">
+        <p className="text-xs">© 2026 FisioHub - Banco de Dados Cloud Integrado via Supabase.</p>
+        <p className="text-[10px] text-teal-400 font-black tracking-wide mt-1 uppercase">Projeto Cocriado por Vinicius Barros do Anjos & Gemini</p>
+      </footer>
+    </div>
+  );
+}
